@@ -18,17 +18,17 @@ Fuzzy Finder is a command-line tool to search for text within files in a specifi
 
 1. Clone the repository:
     ```sh
-    git clone https://github.com/username/fuzzyfinder.git
+    git clone https://github.com/guilhermepelayo/fuzzy.git
     ```
 
 2. Navigate to the project directory:
     ```sh
-    cd fuzzyfinder
+    cd fuzzy
     ```
 
 3. Build the executable:
     ```sh
-    go build -o fuzzyfinder fuzzyfinder.go
+    go build -o fuzzy cmd/main.go
     ```
 
 ## Usage
@@ -42,12 +42,12 @@ Fuzzy Finder is a command-line tool to search for text within files in a specifi
 
 1. Basic usage:
     ```sh
-    ./fuzzyfinder "search-term" "/path/to/directory"
+    ./fuzzy "search-term" "/path/to/directory"
     ```
 
 2. Example:
     ```sh
-    ./fuzzyfinder "matx" "cmd/"
+    ./fuzzy "matx" "cmd/"
     ```
 
 ### Output
