@@ -31,6 +31,20 @@ Fuzzy Finder is a command-line tool to search for text within files in a specifi
     go build -o fuzzy cmd/main.go
     ```
 
+4. Move the executable to a directory in your PATH:
+    ```sh
+    sudo mv fuzzy /usr/local/bin/
+    ```
+
+### Alternative: Adding the Executable to PATH Temporarily
+
+If you prefer not to move the executable, you can add the current directory to your PATH for the session:
+    ```sh
+    export PATH=$PATH:$(pwd)
+    ```
+
+To make this change permanent, add the above line to your `~/.bashrc`, `~/.zshrc`, or other relevant shell configuration file.
+
 ## Usage
 
 ### Command-Line Arguments
@@ -42,12 +56,12 @@ Fuzzy Finder is a command-line tool to search for text within files in a specifi
 
 1. Basic usage:
     ```sh
-    ./fuzzy "search-term" "/path/to/directory"
+    fuzzy <search-term> </path/to/directory>
     ```
 
 2. Example:
     ```sh
-    ./fuzzy "matx" "cmd/"
+    fuzzy matx cmd/
     ```
 
 ### Output
@@ -60,6 +74,3 @@ The tool outputs the file path, line number, and the matching line, with the mat
 - It checks if the file is a text file.
 - It searches for the search term in each line of the file.
 - It highlights exact matches and fuzzy matches (words similar to the search term based on Levenshtein distance).
-
-## Example Output
-
