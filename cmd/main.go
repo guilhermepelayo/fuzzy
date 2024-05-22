@@ -64,16 +64,27 @@ func main() {
 		return
 	}
 
-	for _, result := range results {
-		highlightedLine := highlightMatch(result.Line, searchTerm)
-		fmt.Printf("%s%s%s%s | %s%d%s: %s\n",
-			bold, colorFile, result.FilePath, colorReset,
-			colorLine, result.LineNumber, colorReset,
-			highlightedLine)
-	}
+	printResults(results, searchTerm)
+}
 
+func printResults(results []Result, searchTerm string) {
 	if len(results) == 0 {
 		fmt.Println("No matches found.")
+		return
+	}
+
+	resultsByFile := make(map[string][]Result)
+	for _, result := range results {
+		resultsByFile[result.FilePath] = append(resultsByFile[result.FilePath], result)
+	}
+
+	for filePath, fileResults := range resultsByFile {
+		fmt.Printf("%s%s%s%s\n", bold, colorFile, filePath, colorReset)
+		for _, result := range fileResults {
+			highlightedLine := highlightMatch(result.Line, searchTerm)
+			fmt.Printf("  %s%d%s: %s\n", colorLine, result.LineNumber, colorReset, highlightedLine)
+		}
+		fmt.Println()
 	}
 }
 
