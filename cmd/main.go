@@ -22,6 +22,7 @@ const (
 	bold       = "\033[1m"
 	colorFile  = "\033[31m" // Red
 	colorLine  = "\033[32m" // Green
+	colorMatch = "\033[33m" // Yellow
 )
 
 func main() {
@@ -64,10 +65,11 @@ func main() {
 	}
 
 	for _, result := range results {
+		highlightedLine := highlightMatch(result.Line, searchTerm)
 		fmt.Printf("%s%s%s%s | %s%d%s: %s\n",
 			bold, colorFile, result.FilePath, colorReset,
 			colorLine, result.LineNumber, colorReset,
-			result.Line)
+			highlightedLine)
 	}
 
 	if len(results) == 0 {
@@ -133,6 +135,23 @@ func searchFile(filePath, searchTerm string) ([]Result, error) {
 	}
 
 	return results, nil
+}
+
+func highlightMatch(line, searchTerm string) string {
+	highlighted := line
+	if strings.Contains(line, searchTerm) {
+		highlighted = strings.ReplaceAll(line, searchTerm, fmt.Sprintf("%s%s%s", colorMatch, searchTerm, colorReset))
+	} else {
+		words := strings.Fields(line)
+		for _, word := range words {
+			distance := LevenshteinDistance(word, searchTerm)
+			if distance <= len(searchTerm)/2 {
+				highlighted = strings.ReplaceAll(line, word, fmt.Sprintf("%s%s%s", colorMatch, word, colorReset))
+				break
+			}
+		}
+	}
+	return highlighted
 }
 
 func min(a, b, c int) int {
