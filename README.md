@@ -51,6 +51,7 @@ To make this change permanent, add the above line to your `~/.bashrc`, `~/.zshrc
 
 - `search-term`: The term to search for.
 - `directory`: The directory to search in.
+- `-exact`: (Optional) Use this flag to perform an exact match search.
 
 ### Examples
 
@@ -59,9 +60,19 @@ To make this change permanent, add the above line to your `~/.bashrc`, `~/.zshrc
     fuzzy <search-term> </path/to/directory>
     ```
 
-2. Example:
+2. Exact match usage:
+    ```sh
+    fuzzy -exact <search-term> </path/to/directory>
+    ```
+
+3. Example:
     ```sh
     fuzzy matx cmd/
+    ```
+
+4. Exact match example:
+    ```sh
+    fuzzy -exact matx cmd/
     ```
 
 ### Output

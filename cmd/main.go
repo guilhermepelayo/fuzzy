@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"flag"
 	"fmt"
 	"mime"
 	"net/http"
@@ -26,13 +27,19 @@ const (
 )
 
 func main() {
-	if len(os.Args) < 3 {
-		fmt.Println("Usage: fuzzy <search-term> <directory>")
+	// Define command-line flags
+	exact := flag.Bool("exact", false, "Perform an exact match search")
+	flag.Parse()
+
+	// Get the remaining arguments after the flags
+	args := flag.Args()
+	if len(args) < 2 {
+		fmt.Println("Usage: fuzzy [flags] <search-term> <directory>")
 		return
 	}
 
-	searchTerm := os.Args[1]
-	directory := os.Args[2]
+	searchTerm := args[0]
+	directory := args[1]
 
 	var results []Result
 
@@ -49,7 +56,7 @@ func main() {
 			return nil
 		}
 
-		fileResults, err := searchFile(path, searchTerm)
+		fileResults, err := searchFile(path, searchTerm, *exact)
 		if err != nil {
 			fmt.Printf("Error reading file %s: %v\n", path, err)
 			return nil
@@ -114,7 +121,7 @@ func isTextFile(filePath string) bool {
 	return strings.HasPrefix(mimeType, "text/")
 }
 
-func searchFile(filePath, searchTerm string) ([]Result, error) {
+func searchFile(filePath, searchTerm string, exact bool) ([]Result, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
 		return nil, err
@@ -127,16 +134,22 @@ func searchFile(filePath, searchTerm string) ([]Result, error) {
 	for scanner.Scan() {
 		line := scanner.Text()
 		lineNumber++
-		if strings.Contains(line, searchTerm) {
-			results = append(results, Result{FilePath: filePath, LineNumber: lineNumber, Line: line, Distance: 0})
-			continue
-		}
-		words := strings.Fields(line)
-		for _, word := range words {
-			distance := LevenshteinDistance(word, searchTerm)
-			if distance <= len(searchTerm)/2 {
-				results = append(results, Result{FilePath: filePath, LineNumber: lineNumber, Line: line, Distance: distance})
-				break
+		if exact {
+			if strings.Contains(line, searchTerm) {
+				results = append(results, Result{FilePath: filePath, LineNumber: lineNumber, Line: line, Distance: 0})
+			}
+		} else {
+			if strings.Contains(line, searchTerm) {
+				results = append(results, Result{FilePath: filePath, LineNumber: lineNumber, Line: line, Distance: 0})
+				continue
+			}
+			words := strings.Fields(line)
+			for _, word := range words {
+				distance := LevenshteinDistance(word, searchTerm)
+				if distance <= len(searchTerm)/2 {
+					results = append(results, Result{FilePath: filePath, LineNumber: lineNumber, Line: line, Distance: distance})
+					break
+				}
 			}
 		}
 	}
